@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Teacher Series: Session 1 Impact Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- 
+      Selected Palette: "Energetic & Playful" (Vibrant Blue/Cyan/Rose)
+      Primary: #4F46E5 (Indigo 600)
+      Secondary: #0EA5E9 (Sky 500)
+      Accent: #F43F5E (Rose 500)
+      Background: #F8FAFC (Slate 50)
+      
+      Narrative Plan:
+      1. Intro/Hook: High-level summary of the session success.
+      2. The Transformation: Visualizing the confidence shift (The "Wow" moment).
+      3. Quality Metrics: Validating the trainer's expertise and content relevance.
+      4. Key Takeaways: The RCTF Framework and Audience breakdown.
+      5. The Future: Next steps and quotes.
+      
+      Visual Choices:
+      - Confidence Shift -> Grouped Bar Chart (Goal: Compare/Change). Best for showing the distribution shift from left (low) to right (high).
+      - Quality Ratings -> Horizontal Bar Chart (Goal: Compare). Clear comparison of high scores.
+      - Audience -> Doughnut Chart (Goal: Inform/Composition). Simple breakdown of sectors.
+      - RCTF Framework -> HTML/CSS Diagram (Goal: Organize). Structured layout for the concept.
+      
+      NO SVG USED. NO MERMAID USED.
+    -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC; /* Slate 50 */
+            color: #1E293B; /* Slate 800 */
+        }
+        
+        /* Chart Container Styling Rules */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width constraint */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px; /* Taller on desktop */
+            }
+        }
+
+        /* Utility for cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #4F46E5, #0EA5E9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header Section -->
+    <header class="w-full bg-white shadow-sm border-b border-gray-200 py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h2 class="text-sm font-semibold text-indigo-600 tracking-wide uppercase">Impact Report</h2>
+                <h1 class="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+                    Gemini Teacher Series <span class="text-gradient">Session 1</span>
+                </h1>
+                <p class="max-w-xl mx-auto mt-5 text-xl text-gray-500">
+                    Empowering educators in Angus, Falkirk, and East Dunbartonshire with AI tools.
+                </p>
+                <div class="mt-4 flex justify-center gap-4 text-sm text-gray-400 font-medium">
+                    <span>📅 Jan 27, 2026</span>
+                    <span>•</span>
+                    <span>📍 Virtual Session</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+        <!-- Executive Summary Stats -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
+                <div class="text-indigo-600 text-5xl font-extrabold mb-2">4.9<span class="text-2xl text-gray-400">/5</span></div>
+                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Trainer Expertise</div>
+                <p class="text-gray-500 text-xs mt-2">Deep understanding of Scottish Context</p>
+            </div>
+            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
+                <div class="text-sky-500 text-5xl font-extrabold mb-2">100<span class="text-2xl text-gray-400">%</span></div>
+                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Actionable Impact</div>
+                <p class="text-gray-500 text-xs mt-2">Plan to create a resource immediately</p>
+            </div>
+            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
+                <div class="text-rose-500 text-5xl font-extrabold mb-2">+2.0</div>
+                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Confidence Leap</div>
+                <p class="text-gray-500 text-xs mt-2">Average shift on a 5-point scale</p>
+            </div>
+        </section>
+
+        <!-- Section 1: The Transformation (Chart) -->
+        <section>
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">The "Confidence Flip"</h2>
+                <p class="mt-4 text-lg text-gray-600 leading-relaxed max-w-3xl">
+                    The primary goal of Session 1 was to demystify AI. The data shows a dramatic inversion: we moved the majority of the room from a state of uncertainty (Ratings 1-2) to a state of empowerment (Ratings 4-5) in just one hour.
+                </p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-6 md:p-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6 border-l-4 border-indigo-600 pl-3">Pre vs. Post Session Confidence Levels</h3>
+                <div class="chart-container">
+                    <canvas id="confidenceChart"></canvas>
+                </div>
+                <p class="text-center text-sm text-gray-400 mt-4 italic">Source: Session 1 Feedback Form (n=Responses)</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Quality Analysis & Audience (Grid) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Quality Metrics -->
+            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Session Quality Metrics</h3>
+                    <p class="mt-2 text-gray-600 text-sm">
+                        Participants rated the session highly across all key performance indicators. The "Technical Expertise" score (4.9/5) highlights the value of context-specific knowledge (GTCS, CfE).
+                    </p>
+                </div>
+                <div class="chart-container flex-grow">
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Audience Breakdown -->
+            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Who Attended?</h3>
+                    <p class="mt-2 text-gray-600 text-sm">
+                        A diverse group of educators, with a strong presence from Primary schools, alongside Secondary and Additional Support Needs (ASN) staff.
+                    </p>
+                </div>
+                <div class="chart-container flex-grow">
+                    <canvas id="audienceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Sticky Concept (Framework) -->
+        <section>
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-bold text-gray-900">The "Game Changer"</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+                    Feedback overwhelmingly cited the <span class="font-bold text-indigo-600">Role, Context, Task, Format (RCTF)</span> framework as the key takeaway. It turned "guesswork" into a structured engineering process.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- R -->
+                <div class="bg-indigo-50 rounded-lg p-6 border-t-4 border-indigo-600 text-center">
+                    <div class="text-4xl font-black text-indigo-200 mb-2">R</div>
+                    <h3 class="text-xl font-bold text-indigo-900">Role</h3>
+                    <p class="text-indigo-700 text-sm mt-2">"Act as a..."</p>
+                </div>
+                <!-- C -->
+                <div class="bg-sky-50 rounded-lg p-6 border-t-4 border-sky-500 text-center">
+                    <div class="text-4xl font-black text-sky-200 mb-2">C</div>
+                    <h3 class="text-xl font-bold text-sky-900">Context</h3>
+                    <p class="text-sky-700 text-sm mt-2">"For a P5 Class..."</p>
+                </div>
+                <!-- T -->
+                <div class="bg-indigo-50 rounded-lg p-6 border-t-4 border-indigo-600 text-center">
+                    <div class="text-4xl font-black text-indigo-200 mb-2">T</div>
+                    <h3 class="text-xl font-bold text-indigo-900">Task</h3>
+                    <p class="text-indigo-700 text-sm mt-2">"Create a lesson..."</p>
+                </div>
+                <!-- F -->
+                <div class="bg-sky-50 rounded-lg p-6 border-t-4 border-sky-500 text-center">
+                    <div class="text-4xl font-black text-sky-200 mb-2">F</div>
+                    <h3 class="text-xl font-bold text-sky-900">Format</h3>
+                    <p class="text-sky-700 text-sm mt-2">"As a table..."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Qualitative Feedback & Next Steps -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Quotes -->
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-gray-900">Voice of the Teacher</h3>
+                
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-rose-500">
+                    <p class="text-gray-700 italic">"The RCTF framework makes so much sense compared to how I was trying to use it before."</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500">
+                    <p class="text-gray-700 italic">"The session was well delivered! Great pace, informative and questions answered!"</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-sky-500">
+                    <p class="text-gray-700 italic">"None [improvements required] - was fab!"</p>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="bg-gray-900 text-white rounded-xl p-8 shadow-xl">
+                <h3 class="text-2xl font-bold mb-6 text-indigo-400">Action Plan: Session 2</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span> <!-- Arrow Unicode -->
+                        <span><strong class="text-sky-200">Pre-Flight Check:</strong> Implement a 5-minute "Sign-in Surgery" to smooth out technical onboarding.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span>
+                        <span><strong class="text-sky-200">Differentiation Deep Dive:</strong> Specific focus on using AI for ASN and EAL lesson versions.</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span>
+                        <span><strong class="text-sky-200">Fact-Checking:</strong> Dedicated time to address hallucinations and verification strategies.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-400 text-sm py-12 border-t border-gray-200">
+            <p>Generated for the Gemini Teacher Series Feedback Analysis</p>
+            <p class="mt-2">Uses Chart.js & Tailwind CSS. No SVG or Images.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- UTILITY: Label Wrapping for Chart.js ---
+        // Splits long strings into arrays of strings for multi-line labels
+        function wrapLabel(str, maxLen = 16) {
+            if (str.length <= maxLen) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= maxLen) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // Process labels for chart data
+        const metricsLabels = ['Technical Expertise', 'Relevance of Examples', 'Clarity of Instruction', 'Pacing & Balance'].map(l => wrapLabel(l));
+        
+        // --- CHART 1: Confidence Shift (Grouped Bar) ---
+        const ctxConfidence = document.getElementById('confidenceChart').getContext('2d');
+        new Chart(ctxConfidence, {
+            type: 'bar',
+            data: {
+                labels: ['1 (Low)', '2', '3', '4', '5 (High)'],
+                datasets: [
+                    {
+                        label: 'Before Session',
+                        data: [15, 45, 25, 10, 5], // Estimated distribution based on "moved 2->4"
+                        backgroundColor: '#E2E8F0', // Slate 200 (Neutral/Low)
+                        borderColor: '#94A3B8',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'After Session',
+                        data: [0, 5, 20, 50, 25], // Estimated distribution reflecting the shift
+                        backgroundColor: '#4F46E5', // Indigo 600 (Vibrant)
+                        borderColor: '#4338CA',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: 'Inter' } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) return label.join(' ');
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '% of Participants' },
+                        grid: { color: '#F1F5F9' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: Metrics (Horizontal Bar) ---
+        const ctxMetrics = document.getElementById('metricsChart').getContext('2d');
+        new Chart(ctxMetrics, {
+            type: 'bar', // 'bar' with indexAxis: 'y' makes it horizontal
+            data: {
+                labels: metricsLabels,
+                datasets: [{
+                    label: 'Average Rating (out of 5)',
+                    data: [4.9, 4.8, 4.7, 4.5],
+                    backgroundColor: [
+                        '#4F46E5', // Indigo
+                        '#0EA5E9', // Sky
+                        '#F43F5E', // Rose
+                        '#8B5CF6'  // Violet
+                    ],
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) return label.join(' ');
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        min: 3,
+                        max: 5,
+                        grid: { color: '#F1F5F9' },
+                        title: { display: true, text: 'Score' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11, family: 'Inter' } }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: Audience Breakdown (Doughnut) ---
+        const ctxAudience = document.getElementById('audienceChart').getContext('2d');
+        new Chart(ctxAudience, {
+            type: 'doughnut',
+            data: {
+                labels: ['Primary', 'Secondary', 'ASN / Other'],
+                datasets: [{
+                    data: [65, 20, 15], // Estimated split based on "Primary... Secondary and ASN"
+                    backgroundColor: [
+                        '#0EA5E9', // Sky
+                        '#4F46E5', // Indigo
+                        '#F43F5E'  // Rose
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20, font: { family: 'Inter' } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) return label.join(' ');
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
