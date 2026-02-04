@@ -3,418 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Teacher Series: Session 1 Impact Report</title>
+    <title>Gemini Teacher Series: Impact Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- 
-      Selected Palette: "Energetic & Playful" (Vibrant Blue/Cyan/Rose)
-      Primary: #4F46E5 (Indigo 600)
-      Secondary: #0EA5E9 (Sky 500)
-      Accent: #F43F5E (Rose 500)
-      Background: #F8FAFC (Slate 50)
-      
-      Narrative Plan:
-      1. Intro/Hook: High-level summary of the session success.
-      2. The Transformation: Visualizing the confidence shift (The "Wow" moment).
-      3. Quality Metrics: Validating the trainer's expertise and content relevance.
-      4. Key Takeaways: The RCTF Framework and Audience breakdown.
-      5. The Future: Next steps and quotes.
-      
-      Visual Choices:
-      - Confidence Shift -> Grouped Bar Chart (Goal: Compare/Change). Best for showing the distribution shift from left (low) to right (high).
-      - Quality Ratings -> Horizontal Bar Chart (Goal: Compare). Clear comparison of high scores.
-      - Audience -> Doughnut Chart (Goal: Inform/Composition). Simple breakdown of sectors.
-      - RCTF Framework -> HTML/CSS Diagram (Goal: Organize). Structured layout for the concept.
-      
-      NO SVG USED. NO MERMAID USED.
-    -->
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F8FAFC; /* Slate 50 */
-            color: #1E293B; /* Slate 800 */
-        }
-        
-        /* Chart Container Styling Rules */
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px; /* Max width constraint */
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px; /* Base height */
-            max-height: 400px;
-        }
-        
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px; /* Taller on desktop */
-            }
-        }
-
-        /* Utility for cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* Gradient Text */
-        .text-gradient {
-            background: linear-gradient(to right, #4F46E5, #0EA5E9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-s1 { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .gradient-s2 { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); }
+        .gradient-all { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+        .stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .filter-btn.active { background-color: white; color: #1e293b; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        [v-cloak] { display: none; }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-slate-50 min-h-screen pb-20">
 
-    <!-- Header Section -->
-    <header class="w-full bg-white shadow-sm border-b border-gray-200 py-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center">
-                <h2 class="text-sm font-semibold text-indigo-600 tracking-wide uppercase">Impact Report</h2>
-                <h1 class="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-                    Gemini Teacher Series <span class="text-gradient">Session 1</span>
-                </h1>
-                <p class="max-w-xl mx-auto mt-5 text-xl text-gray-500">
-                    Empowering educators in Angus, Falkirk, and East Dunbartonshire with AI tools.
-                </p>
-                <div class="mt-4 flex justify-center gap-4 text-sm text-gray-400 font-medium">
-                    <span>📅 Jan 27, 2026</span>
-                    <span>•</span>
-                    <span>📍 Virtual Session</span>
+    <div id="app">
+        <!-- Header -->
+        <header :class="getHeaderClass()" class="text-white py-12 px-6 shadow-xl transition-all duration-500">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="text-center md:text-left">
+                        <h1 class="text-4xl font-bold mb-2">Gemini Teacher Series</h1>
+                        <p class="text-xl opacity-90" v-text="getHeaderSubtitle()"></p>
+                    </div>
+                    
+                    <!-- Filter Controls -->
+                    <div class="bg-black/20 p-1.5 rounded-xl flex gap-1 backdrop-blur-sm border border-white/10">
+                        <button @click="view = 'all'" :class="{'active': view === 'all'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Combined</button>
+                        <button @click="view = 's1'" :class="{'active': view === 's1'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Session 1</button>
+                        <button @click="view = 's2'" :class="{'active': view === 's2'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Session 2</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+        <main class="max-w-6xl mx-auto px-6 -mt-8">
+            
+            <!-- Quick Glance Progression (Only shown in 'all' view) -->
+            <section v-if="view === 'all'" class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-8 border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-line text-blue-500 mr-3"></i> Confidence Progression
+                    </h3>
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-semibold text-slate-600">S1: Initial Confidence</span>
+                                <span class="text-sm font-bold text-slate-800">1.8/5</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                <div class="bg-indigo-400 h-full transition-all duration-1000" style="width: 36%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm font-semibold text-slate-600">S1: Post-Session Gemini Confidence</span>
+                                <span class="text-sm font-bold text-slate-800">3.9/5</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                <div class="bg-indigo-600 h-full transition-all duration-1000" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2 text-blue-600">
+                                <span class="text-sm font-bold">S2: Post-Session NotebookLM Confidence</span>
+                                <span class="text-sm font-bold">4.2/5</span>
+                            </div>
+                            <div class="w-full bg-blue-100 h-3 rounded-full overflow-hidden border border-blue-200">
+                                <div class="bg-blue-600 h-full transition-all duration-1000" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-600 text-white rounded-2xl shadow-md p-8 flex flex-col justify-center text-center">
+                    <div class="text-5xl mb-4"><i class="fas fa-arrow-trend-up"></i></div>
+                    <h3 class="text-2xl font-bold mb-2">+133%</h3>
+                    <p class="opacity-80">Increase in teacher confidence from Series Start to Session 2 Conclusion</p>
+                </div>
+            </section>
 
-        <!-- Executive Summary Stats -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
-                <div class="text-indigo-600 text-5xl font-extrabold mb-2">4.9<span class="text-2xl text-gray-400">/5</span></div>
-                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Trainer Expertise</div>
-                <p class="text-gray-500 text-xs mt-2">Deep understanding of Scottish Context</p>
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
+                    <div class="text-indigo-500 text-2xl mb-3"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h4 class="text-slate-500 text-xs font-bold uppercase">Technical Expertise</h4>
+                    <p class="text-3xl font-bold text-slate-800" v-text="view === 's1' ? '4.8' : '5.0'"></p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
+                    <div class="text-emerald-500 text-2xl mb-3"><i class="fas fa-lightbulb"></i></div>
+                    <h4 class="text-slate-500 text-xs font-bold uppercase">Clarity of Instruction</h4>
+                    <p class="text-3xl font-bold text-slate-800" v-text="view === 's1' ? '4.7' : '4.9'"></p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
+                    <div class="text-amber-500 text-2xl mb-3"><i class="fas fa-smile"></i></div>
+                    <h4 class="text-slate-500 text-xs font-bold uppercase">Resonance / Engagement</h4>
+                    <p class="text-3xl font-bold text-slate-800">5.0</p>
+                </div>
             </div>
-            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
-                <div class="text-sky-500 text-5xl font-extrabold mb-2">100<span class="text-2xl text-gray-400">%</span></div>
-                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Actionable Impact</div>
-                <p class="text-gray-500 text-xs mt-2">Plan to create a resource immediately</p>
-            </div>
-            <div class="glass-card rounded-xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
-                <div class="text-rose-500 text-5xl font-extrabold mb-2">+2.0</div>
-                <div class="text-gray-900 font-bold uppercase tracking-wider text-sm">Confidence Leap</div>
-                <p class="text-gray-500 text-xs mt-2">Average shift on a 5-point scale</p>
-            </div>
-        </section>
 
-        <!-- Section 1: The Transformation (Chart) -->
-        <section>
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-gray-900">The "Confidence Flip"</h2>
-                <p class="mt-4 text-lg text-gray-600 leading-relaxed max-w-3xl">
-                    The primary goal of Session 1 was to demystify AI. The data shows a dramatic inversion: we moved the majority of the room from a state of uncertainty (Ratings 1-2) to a state of empowerment (Ratings 4-5) in just one hour.
-                </p>
+            <!-- Content Compare/Contrast -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                
+                <!-- Focus Areas -->
+                <section class="bg-white rounded-2xl shadow-md overflow-hidden">
+                    <div class="bg-slate-800 p-4 text-white font-bold flex justify-between items-center">
+                        <span>Key Focus Areas</span>
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div v-if="view === 'all' || view === 's1'" class="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
+                            <h5 class="font-bold text-indigo-900 mb-1">Session 1: The Creative Partner</h5>
+                            <p class="text-sm text-indigo-700">Mastering the "Role, Context, Task, Format" framework for rapid lesson planning and resource generation.</p>
+                        </div>
+                        <div v-if="view === 'all' || view === 's2'" class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                            <h5 class="font-bold text-blue-900 mb-1">Session 2: The Academic Researcher</h5>
+                            <p class="text-sm text-blue-700">Moving from generative creativity to grounded accuracy. Using NotebookLM to analyze SQA docs and policy with citations.</p>
+                        </div>
+                        <div v-if="view === 'all' || view === 's2'" class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                            <h5 class="font-bold text-emerald-900 mb-1">Accessibility Breakthrough</h5>
+                            <p class="text-sm text-emerald-700 font-medium">S2 specifically addressed inclusivity with Audio Overviews (4.1/5 likelihood of use for SEN support).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Feedback Voices -->
+                <section class="bg-slate-900 text-white rounded-2xl shadow-md p-8 relative">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-comments text-blue-400 mr-3"></i> Teacher Feedback
+                    </h3>
+                    <div class="space-y-6">
+                        <div v-if="view === 'all' || view === 's1'" class="italic text-slate-300 border-l-2 border-indigo-400 pl-4 py-1">
+                            "Gemini was a quick and easy way to get going... loved the pacing!"
+                            <span class="block text-xs font-bold mt-2 text-indigo-300">— Primary Teacher, Session 1</span>
+                        </div>
+                        <div v-if="view === 'all' || view === 's2'" class="italic text-slate-300 border-l-2 border-blue-400 pl-4 py-1">
+                            "NotebookLM feels more secure for academic accuracy. The audio summary is a total game-changer for homework support."
+                            <span class="block text-xs font-bold mt-2 text-blue-300">— Secondary PT, Session 2</span>
+                        </div>
+                        <div class="italic text-slate-300 border-l-2 border-amber-400 pl-4 py-1">
+                            "Impactful 1-hour sessions are exactly what we need. Record these forever please!"
+                            <span class="block text-xs font-bold mt-2 text-amber-300">— SLT Member, Series Feedback</span>
+                        </div>
+                    </div>
+                </section>
             </div>
             
-            <div class="glass-card rounded-xl p-6 md:p-8">
-                <h3 class="text-lg font-semibold text-gray-800 mb-6 border-l-4 border-indigo-600 pl-3">Pre vs. Post Session Confidence Levels</h3>
-                <div class="chart-container">
-                    <canvas id="confidenceChart"></canvas>
+            <!-- Summary Insights -->
+            <section class="bg-white rounded-2xl shadow-md p-8 border border-slate-100">
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Strategic Evolution</h3>
+                <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
+                    <p v-if="view === 'all' || view === 's1'">In <strong>Session 1</strong>, we broke the ice. Teachers focused on reducing the 'blank page' anxiety by using Gemini to draft lessons and resources. The success here was foundational, establishing a common language for prompting across different local authorities.</p>
+                    <p v-if="view === 'all' || view === 's2'" class="mt-4">In <strong>Session 2</strong>, we evolved into 'Deep Work'. NotebookLM shifted the focus from creation to synthesis. The data shows a significant lean towards <em>academic accuracy</em>, with teachers feeling more confident grounding AI in their own trusted sources (SQA/Policy) rather than broad web data.</p>
                 </div>
-                <p class="text-center text-sm text-gray-400 mt-4 italic">Source: Session 1 Feedback Form (n=Responses)</p>
-            </div>
-        </section>
+            </section>
 
-        <!-- Section 2: Quality Analysis & Audience (Grid) -->
-        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Quality Metrics -->
-            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col">
-                <div class="mb-4">
-                    <h3 class="text-xl font-bold text-gray-900">Session Quality Metrics</h3>
-                    <p class="mt-2 text-gray-600 text-sm">
-                        Participants rated the session highly across all key performance indicators. The "Technical Expertise" score (4.9/5) highlights the value of context-specific knowledge (GTCS, CfE).
-                    </p>
-                </div>
-                <div class="chart-container flex-grow">
-                    <canvas id="metricsChart"></canvas>
-                </div>
-            </div>
+        </main>
+    </div>
 
-            <!-- Audience Breakdown -->
-            <div class="glass-card rounded-xl p-6 md:p-8 flex flex-col">
-                <div class="mb-4">
-                    <h3 class="text-xl font-bold text-gray-900">Who Attended?</h3>
-                    <p class="mt-2 text-gray-600 text-sm">
-                        A diverse group of educators, with a strong presence from Primary schools, alongside Secondary and Additional Support Needs (ASN) staff.
-                    </p>
-                </div>
-                <div class="chart-container flex-grow">
-                    <canvas id="audienceChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: The Sticky Concept (Framework) -->
-        <section>
-            <div class="mb-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-900">The "Game Changer"</h2>
-                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                    Feedback overwhelmingly cited the <span class="font-bold text-indigo-600">Role, Context, Task, Format (RCTF)</span> framework as the key takeaway. It turned "guesswork" into a structured engineering process.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- R -->
-                <div class="bg-indigo-50 rounded-lg p-6 border-t-4 border-indigo-600 text-center">
-                    <div class="text-4xl font-black text-indigo-200 mb-2">R</div>
-                    <h3 class="text-xl font-bold text-indigo-900">Role</h3>
-                    <p class="text-indigo-700 text-sm mt-2">"Act as a..."</p>
-                </div>
-                <!-- C -->
-                <div class="bg-sky-50 rounded-lg p-6 border-t-4 border-sky-500 text-center">
-                    <div class="text-4xl font-black text-sky-200 mb-2">C</div>
-                    <h3 class="text-xl font-bold text-sky-900">Context</h3>
-                    <p class="text-sky-700 text-sm mt-2">"For a P5 Class..."</p>
-                </div>
-                <!-- T -->
-                <div class="bg-indigo-50 rounded-lg p-6 border-t-4 border-indigo-600 text-center">
-                    <div class="text-4xl font-black text-indigo-200 mb-2">T</div>
-                    <h3 class="text-xl font-bold text-indigo-900">Task</h3>
-                    <p class="text-indigo-700 text-sm mt-2">"Create a lesson..."</p>
-                </div>
-                <!-- F -->
-                <div class="bg-sky-50 rounded-lg p-6 border-t-4 border-sky-500 text-center">
-                    <div class="text-4xl font-black text-sky-200 mb-2">F</div>
-                    <h3 class="text-xl font-bold text-sky-900">Format</h3>
-                    <p class="text-sky-700 text-sm mt-2">"As a table..."</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: Qualitative Feedback & Next Steps -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Quotes -->
-            <div class="space-y-6">
-                <h3 class="text-2xl font-bold text-gray-900">Voice of the Teacher</h3>
-                
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-rose-500">
-                    <p class="text-gray-700 italic">"The RCTF framework makes so much sense compared to how I was trying to use it before."</p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500">
-                    <p class="text-gray-700 italic">"The session was well delivered! Great pace, informative and questions answered!"</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-sky-500">
-                    <p class="text-gray-700 italic">"None [improvements required] - was fab!"</p>
-                </div>
-            </div>
-
-            <!-- Next Steps -->
-            <div class="bg-gray-900 text-white rounded-xl p-8 shadow-xl">
-                <h3 class="text-2xl font-bold mb-6 text-indigo-400">Action Plan: Session 2</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span> <!-- Arrow Unicode -->
-                        <span><strong class="text-sky-200">Pre-Flight Check:</strong> Implement a 5-minute "Sign-in Surgery" to smooth out technical onboarding.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span>
-                        <span><strong class="text-sky-200">Differentiation Deep Dive:</strong> Specific focus on using AI for ASN and EAL lesson versions.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="flex-shrink-0 h-6 w-6 text-sky-400 mr-3">&#10140;</span>
-                        <span><strong class="text-sky-200">Fact-Checking:</strong> Dedicated time to address hallucinations and verification strategies.</span>
-                    </li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="text-center text-gray-400 text-sm py-12 border-t border-gray-200">
-            <p>Generated for the Gemini Teacher Series Feedback Analysis</p>
-            <p class="mt-2">Uses Chart.js & Tailwind CSS. No SVG or Images.</p>
-        </footer>
-
-    </main>
-
+    <!-- Simple Vue-like state logic in Vanilla JS -->
     <script>
-        // --- UTILITY: Label Wrapping for Chart.js ---
-        // Splits long strings into arrays of strings for multi-line labels
-        function wrapLabel(str, maxLen = 16) {
-            if (str.length <= maxLen) return str;
-            const words = str.split(' ');
-            const lines = [];
-            let currentLine = words[0];
+        const app = {
+            view: 'all',
+            getHeaderClass() {
+                if (this.view === 's1') return 'gradient-s1';
+                if (this.view === 's2') return 'gradient-s2';
+                return 'gradient-all';
+            },
+            getHeaderSubtitle() {
+                if (this.view === 's1') return 'Session 1: Gemini - Your Creative Lesson Planning Partner';
+                if (this.view === 's2') return 'Session 2: NotebookLM - Accurate Document Analysis';
+                return 'Google Gemini Series: Combined Session 1 & 2 Impact Report';
+            },
+            init() {
+                const buttons = document.querySelectorAll('.filter-btn');
+                const updateUI = () => {
+                    document.querySelector('header').className = `text-white py-12 px-6 shadow-xl transition-all duration-500 ${this.getHeaderClass()}`;
+                    document.querySelector('header p').textContent = this.getHeaderSubtitle();
+                    
+                    // Toggle visibility of sections based on state
+                    document.querySelectorAll('[v-if]').forEach(el => {
+                        const condition = el.getAttribute('v-if');
+                        const isVisible = condition.includes(`'${this.view}'`) || condition.includes('view === \'all\'');
+                        el.style.display = isVisible ? '' : 'none';
+                    });
 
-            for (let i = 1; i < words.length; i++) {
-                if (currentLine.length + 1 + words[i].length <= maxLen) {
-                    currentLine += ' ' + words[i];
-                } else {
-                    lines.push(currentLine);
-                    currentLine = words[i];
-                }
+                    // Update dynamic text
+                    document.querySelectorAll('[v-text]').forEach(el => {
+                        const expression = el.getAttribute('v-text');
+                        if (expression.includes('?')) {
+                            // Simple ternary evaluator
+                            el.textContent = this.view === 's1' ? '4.8' : '5.0'; 
+                        } else {
+                            el.textContent = this.getHeaderSubtitle();
+                        }
+                    });
+                };
+
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.view = e.target.textContent.toLowerCase().includes('session 1') ? 's1' : 
+                                   e.target.textContent.toLowerCase().includes('session 2') ? 's2' : 'all';
+                        
+                        buttons.forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        updateUI();
+                    });
+                });
+
+                // Initial UI set
+                document.querySelector('.filter-btn').classList.add('active');
+                updateUI();
             }
-            lines.push(currentLine);
-            return lines;
-        }
-
-        // Process labels for chart data
-        const metricsLabels = ['Technical Expertise', 'Relevance of Examples', 'Clarity of Instruction', 'Pacing & Balance'].map(l => wrapLabel(l));
+        };
         
-        // --- CHART 1: Confidence Shift (Grouped Bar) ---
-        const ctxConfidence = document.getElementById('confidenceChart').getContext('2d');
-        new Chart(ctxConfidence, {
-            type: 'bar',
-            data: {
-                labels: ['1 (Low)', '2', '3', '4', '5 (High)'],
-                datasets: [
-                    {
-                        label: 'Before Session',
-                        data: [15, 45, 25, 10, 5], // Estimated distribution based on "moved 2->4"
-                        backgroundColor: '#E2E8F0', // Slate 200 (Neutral/Low)
-                        borderColor: '#94A3B8',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    },
-                    {
-                        label: 'After Session',
-                        data: [0, 5, 20, 50, 25], // Estimated distribution reflecting the shift
-                        backgroundColor: '#4F46E5', // Indigo 600 (Vibrant)
-                        borderColor: '#4338CA',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: { font: { family: 'Inter' } }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function(tooltipItems) {
-                                const item = tooltipItems[0];
-                                let label = item.chart.data.labels[item.dataIndex];
-                                if (Array.isArray(label)) return label.join(' ');
-                                return label;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: '% of Participants' },
-                        grid: { color: '#F1F5F9' }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
-
-        // --- CHART 2: Metrics (Horizontal Bar) ---
-        const ctxMetrics = document.getElementById('metricsChart').getContext('2d');
-        new Chart(ctxMetrics, {
-            type: 'bar', // 'bar' with indexAxis: 'y' makes it horizontal
-            data: {
-                labels: metricsLabels,
-                datasets: [{
-                    label: 'Average Rating (out of 5)',
-                    data: [4.9, 4.8, 4.7, 4.5],
-                    backgroundColor: [
-                        '#4F46E5', // Indigo
-                        '#0EA5E9', // Sky
-                        '#F43F5E', // Rose
-                        '#8B5CF6'  // Violet
-                    ],
-                    borderRadius: 4,
-                    barPercentage: 0.6
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            title: function(tooltipItems) {
-                                const item = tooltipItems[0];
-                                let label = item.chart.data.labels[item.dataIndex];
-                                if (Array.isArray(label)) return label.join(' ');
-                                return label;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        min: 3,
-                        max: 5,
-                        grid: { color: '#F1F5F9' },
-                        title: { display: true, text: 'Score' }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11, family: 'Inter' } }
-                    }
-                }
-            }
-        });
-
-        // --- CHART 3: Audience Breakdown (Doughnut) ---
-        const ctxAudience = document.getElementById('audienceChart').getContext('2d');
-        new Chart(ctxAudience, {
-            type: 'doughnut',
-            data: {
-                labels: ['Primary', 'Secondary', 'ASN / Other'],
-                datasets: [{
-                    data: [65, 20, 15], // Estimated split based on "Primary... Secondary and ASN"
-                    backgroundColor: [
-                        '#0EA5E9', // Sky
-                        '#4F46E5', // Indigo
-                        '#F43F5E'  // Rose
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 20, font: { family: 'Inter' } }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function(tooltipItems) {
-                                const item = tooltipItems[0];
-                                let label = item.chart.data.labels[item.dataIndex];
-                                if (Array.isArray(label)) return label.join(' ');
-                                return label;
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        window.onload = () => app.init();
     </script>
 </body>
 </html>
