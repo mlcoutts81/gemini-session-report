@@ -3,222 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Teacher Series: Impact Dashboard</title>
+    <title>Gemini Teacher Series Impact Report</title>
+    <!-- Tailwind for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- React and ReactDOM CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX parsing in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Recharts for Data Viz -->
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .gradient-s1 { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-        .gradient-s2 { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); }
-        .gradient-all { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
-        .stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .filter-btn.active { background-color: white; color: #1e293b; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        [v-cloak] { display: none; }
+        .recharts-text { font-size: 10px; font-weight: 600; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-20">
+<body class="bg-slate-50">
+    <div id="root"></div>
 
-    <div id="app">
-        <!-- Header -->
-        <header :class="getHeaderClass()" class="text-white py-12 px-6 shadow-xl transition-all duration-500">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div class="text-center md:text-left">
-                        <h1 class="text-4xl font-bold mb-2">Gemini Teacher Series</h1>
-                        <p class="text-xl opacity-90" v-text="getHeaderSubtitle()"></p>
-                    </div>
-                    
-                    <!-- Filter Controls -->
-                    <div class="bg-black/20 p-1.5 rounded-xl flex gap-1 backdrop-blur-sm border border-white/10">
-                        <button @click="view = 'all'" :class="{'active': view === 'all'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Combined</button>
-                        <button @click="view = 's1'" :class="{'active': view === 's1'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Session 1</button>
-                        <button @click="view = 's2'" :class="{'active': view === 's2'}" class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all">Session 2</button>
-                    </div>
-                </div>
-            </div>
-        </header>
+    <script type="text/babel">
+        const { 
+            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+            PieChart, Cell, Pie, RadarChart, PolarGrid, PolarAngleAxis, Radar 
+        } = Recharts;
 
-        <main class="max-w-6xl mx-auto px-6 -mt-8">
-            
-            <!-- Quick Glance Progression (Only shown in 'all' view) -->
-            <section v-if="view === 'all'" class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-8 border border-slate-100">
-                    <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
-                        <i class="fas fa-chart-line text-blue-500 mr-3"></i> Confidence Progression
-                    </h3>
-                    <div class="space-y-8">
-                        <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm font-semibold text-slate-600">S1: Initial Confidence</span>
-                                <span class="text-sm font-bold text-slate-800">1.8/5</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                                <div class="bg-indigo-400 h-full transition-all duration-1000" style="width: 36%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm font-semibold text-slate-600">S1: Post-Session Gemini Confidence</span>
-                                <span class="text-sm font-bold text-slate-800">3.9/5</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                                <div class="bg-indigo-600 h-full transition-all duration-1000" style="width: 78%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-2 text-blue-600">
-                                <span class="text-sm font-bold">S2: Post-Session NotebookLM Confidence</span>
-                                <span class="text-sm font-bold">4.2/5</span>
-                            </div>
-                            <div class="w-full bg-blue-100 h-3 rounded-full overflow-hidden border border-blue-200">
-                                <div class="bg-blue-600 h-full transition-all duration-1000" style="width: 84%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-blue-600 text-white rounded-2xl shadow-md p-8 flex flex-col justify-center text-center">
-                    <div class="text-5xl mb-4"><i class="fas fa-arrow-trend-up"></i></div>
-                    <h3 class="text-2xl font-bold mb-2">+133%</h3>
-                    <p class="opacity-80">Increase in teacher confidence from Series Start to Session 2 Conclusion</p>
-                </div>
-            </section>
+        // Icons from Lucide
+        const Icon = ({ name, size = 24, className = "" }) => {
+            const [svg, setSvg] = React.useState("");
+            React.useEffect(() => {
+                const icon = lucide.createIcons();
+            }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
 
-            <!-- Metrics Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
-                    <div class="text-indigo-500 text-2xl mb-3"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <h4 class="text-slate-500 text-xs font-bold uppercase">Technical Expertise</h4>
-                    <p class="text-3xl font-bold text-slate-800" v-text="view === 's1' ? '4.8' : '5.0'"></p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
-                    <div class="text-emerald-500 text-2xl mb-3"><i class="fas fa-lightbulb"></i></div>
-                    <h4 class="text-slate-500 text-xs font-bold uppercase">Clarity of Instruction</h4>
-                    <p class="text-3xl font-bold text-slate-800" v-text="view === 's1' ? '4.7' : '4.9'"></p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 stat-card">
-                    <div class="text-amber-500 text-2xl mb-3"><i class="fas fa-smile"></i></div>
-                    <h4 class="text-slate-500 text-xs font-bold uppercase">Resonance / Engagement</h4>
-                    <p class="text-3xl font-bold text-slate-800">5.0</p>
-                </div>
-            </div>
-
-            <!-- Content Compare/Contrast -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                
-                <!-- Focus Areas -->
-                <section class="bg-white rounded-2xl shadow-md overflow-hidden">
-                    <div class="bg-slate-800 p-4 text-white font-bold flex justify-between items-center">
-                        <span>Key Focus Areas</span>
-                        <i class="fas fa-list-check"></i>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div v-if="view === 'all' || view === 's1'" class="p-4 rounded-xl bg-indigo-50 border border-indigo-100">
-                            <h5 class="font-bold text-indigo-900 mb-1">Session 1: The Creative Partner</h5>
-                            <p class="text-sm text-indigo-700">Mastering the "Role, Context, Task, Format" framework for rapid lesson planning and resource generation.</p>
-                        </div>
-                        <div v-if="view === 'all' || view === 's2'" class="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                            <h5 class="font-bold text-blue-900 mb-1">Session 2: The Academic Researcher</h5>
-                            <p class="text-sm text-blue-700">Moving from generative creativity to grounded accuracy. Using NotebookLM to analyze SQA docs and policy with citations.</p>
-                        </div>
-                        <div v-if="view === 'all' || view === 's2'" class="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-                            <h5 class="font-bold text-emerald-900 mb-1">Accessibility Breakthrough</h5>
-                            <p class="text-sm text-emerald-700 font-medium">S2 specifically addressed inclusivity with Audio Overviews (4.1/5 likelihood of use for SEN support).</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Feedback Voices -->
-                <section class="bg-slate-900 text-white rounded-2xl shadow-md p-8 relative">
-                    <h3 class="text-xl font-bold mb-6 flex items-center">
-                        <i class="fas fa-comments text-blue-400 mr-3"></i> Teacher Feedback
-                    </h3>
-                    <div class="space-y-6">
-                        <div v-if="view === 'all' || view === 's1'" class="italic text-slate-300 border-l-2 border-indigo-400 pl-4 py-1">
-                            "Gemini was a quick and easy way to get going... loved the pacing!"
-                            <span class="block text-xs font-bold mt-2 text-indigo-300">— Primary Teacher, Session 1</span>
-                        </div>
-                        <div v-if="view === 'all' || view === 's2'" class="italic text-slate-300 border-l-2 border-blue-400 pl-4 py-1">
-                            "NotebookLM feels more secure for academic accuracy. The audio summary is a total game-changer for homework support."
-                            <span class="block text-xs font-bold mt-2 text-blue-300">— Secondary PT, Session 2</span>
-                        </div>
-                        <div class="italic text-slate-300 border-l-2 border-amber-400 pl-4 py-1">
-                            "Impactful 1-hour sessions are exactly what we need. Record these forever please!"
-                            <span class="block text-xs font-bold mt-2 text-amber-300">— SLT Member, Series Feedback</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            
-            <!-- Summary Insights -->
-            <section class="bg-white rounded-2xl shadow-md p-8 border border-slate-100">
-                <h3 class="text-xl font-bold text-slate-800 mb-4">Strategic Evolution</h3>
-                <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
-                    <p v-if="view === 'all' || view === 's1'">In <strong>Session 1</strong>, we broke the ice. Teachers focused on reducing the 'blank page' anxiety by using Gemini to draft lessons and resources. The success here was foundational, establishing a common language for prompting across different local authorities.</p>
-                    <p v-if="view === 'all' || view === 's2'" class="mt-4">In <strong>Session 2</strong>, we evolved into 'Deep Work'. NotebookLM shifted the focus from creation to synthesis. The data shows a significant lean towards <em>academic accuracy</em>, with teachers feeling more confident grounding AI in their own trusted sources (SQA/Policy) rather than broad web data.</p>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- Simple Vue-like state logic in Vanilla JS -->
-    <script>
-        const app = {
-            view: 'all',
-            getHeaderClass() {
-                if (this.view === 's1') return 'gradient-s1';
-                if (this.view === 's2') return 'gradient-s2';
-                return 'gradient-all';
+        const SESSION_DATA = {
+            overall: {
+                totalResponses: 142,
+                avgExpertise: 4.92,
+                avgClarity: 4.85,
+                avgEngagement: 4.88,
+                avgPacing: 4.75,
+                sectorBreakdown: [
+                    { name: 'Primary', value: 55 },
+                    { name: 'Secondary', value: 38 },
+                    { name: 'ASN', value: 9 }
+                ]
             },
-            getHeaderSubtitle() {
-                if (this.view === 's1') return 'Session 1: Gemini - Your Creative Lesson Planning Partner';
-                if (this.view === 's2') return 'Session 2: NotebookLM - Accurate Document Analysis';
-                return 'Google Gemini Series: Combined Session 1 & 2 Impact Report';
+            learnerUsage: {
+                comfortScore: 78,
+                asnBenefitBelief: 94,
+                viewpoints: [
+                    { name: 'Need for Future Careers', value: 42 },
+                    { name: 'Value Skills/Not Ready', value: 35 },
+                    { name: 'Support Required', value: 18 },
+                    { name: 'Cautious', value: 5 }
+                ]
             },
-            init() {
-                const buttons = document.querySelectorAll('.filter-btn');
-                const updateUI = () => {
-                    document.querySelector('header').className = `text-white py-12 px-6 shadow-xl transition-all duration-500 ${this.getHeaderClass()}`;
-                    document.querySelector('header p').textContent = this.getHeaderSubtitle();
-                    
-                    // Toggle visibility of sections based on state
-                    document.querySelectorAll('[v-if]').forEach(el => {
-                        const condition = el.getAttribute('v-if');
-                        const isVisible = condition.includes(`'${this.view}'`) || condition.includes('view === \'all\'');
-                        el.style.display = isVisible ? '' : 'none';
-                    });
-
-                    // Update dynamic text
-                    document.querySelectorAll('[v-text]').forEach(el => {
-                        const expression = el.getAttribute('v-text');
-                        if (expression.includes('?')) {
-                            // Simple ternary evaluator
-                            el.textContent = this.view === 's1' ? '4.8' : '5.0'; 
-                        } else {
-                            el.textContent = this.getHeaderSubtitle();
-                        }
-                    });
-                };
-
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        this.view = e.target.textContent.toLowerCase().includes('session 1') ? 's1' : 
-                                   e.target.textContent.toLowerCase().includes('session 2') ? 's2' : 'all';
-                        
-                        buttons.forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        updateUI();
-                    });
-                });
-
-                // Initial UI set
-                document.querySelector('.filter-btn').classList.add('active');
-                updateUI();
+            s1: { title: "S1: Lesson Planning", before: 1.8, after: 4.2 },
+            s2: { title: "S2: NotebookLM", accessibility: 4.7, accuracy: 4.3 },
+            s3: { title: "S3: Gemini Canvas", before: 2.1, after: 4.4 },
+            nextSteps: {
+                requested: [
+                    { name: 'Webinars', value: 45 },
+                    { name: 'Self-Paced', value: 30 },
+                    { name: 'Examples', value: 25 }
+                ],
+                priorities: [
+                    "Subject-specific prompting for CfE levels",
+                    "Google Classroom workflow integration",
+                    "Ethical AI guidelines for pupil usage",
+                    "ASN-specific accessibility walkthroughs"
+                ]
             }
         };
-        
-        window.onload = () => app.init();
+
+        const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+
+        const StatCard = ({ icon, title, value, subtext, colorClass }) => (
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+                <div className={`p-3 rounded-xl ${colorClass}`}>
+                    <Icon name={icon} />
+                </div>
+                <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{title}</p>
+                    <h3 className="text-2xl font-black text-slate-900">{value}</h3>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">{subtext}</p>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = React.useState('overall');
+
+            React.useEffect(() => {
+                lucide.createIcons();
+            }, [activeTab]);
+
+            return (
+                <div className="min-h-screen pb-20">
+                    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+                        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div>
+                                <h1 className="text-xl font-black text-blue-700 tracking-tighter uppercase">Gemini Teacher Impact</h1>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">EdTech Coaching Scotland</p>
+                            </div>
+                            <nav className="flex flex-wrap bg-slate-100 p-1 rounded-xl gap-1">
+                                {[
+                                    { id: 'overall', label: 'Quality' },
+                                    { id: 'learners', label: 'Learners' },
+                                    { id: 'sessions', label: 'Sessions' },
+                                    { id: 'next', label: 'Next Steps' }
+                                ].map(tab => (
+                                    <button 
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${activeTab === tab.id ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
+                    </header>
+
+                    <main className="max-w-6xl mx-auto px-4 mt-8">
+                        {activeTab === 'overall' && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <StatCard icon="award" title="Expertise" value="4.9/5" subtext="Technical Knowledge" colorClass="bg-blue-50 text-blue-600" />
+                                    <StatCard icon="lightbulb" title="Clarity" value="4.8/5" subtext="Instructions" colorClass="bg-emerald-50 text-emerald-600" />
+                                    <StatCard icon="users" title="Engagement" value="4.8/5" subtext="Relevance" colorClass="bg-indigo-50 text-indigo-600" />
+                                    <StatCard icon="clock" title="Pacing" value="4.7/5" subtext="Hands-on Balance" colorClass="bg-amber-50 text-amber-600" />
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                        <h3 className="text-sm font-black uppercase tracking-widest mb-6">Instructional Quality Radar</h3>
+                                        <div className="h-64">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                                                    { subject: 'Expertise', A: 4.9 },
+                                                    { subject: 'Clarity', A: 4.8 },
+                                                    { subject: 'Engagement', A: 4.8 },
+                                                    { subject: 'Pacing', A: 4.7 },
+                                                    { subject: 'Examples', A: 4.9 }
+                                                ]}>
+                                                    <PolarGrid />
+                                                    <PolarAngleAxis dataKey="subject" />
+                                                    <Radar dataKey="A" stroke="#2563eb" fill="#3b82f6" fillOpacity={0.6} />
+                                                </RadarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                                        <h3 className="text-sm font-black uppercase tracking-widest mb-4">Trainer Feedback</h3>
+                                        <div className="space-y-4">
+                                            <p className="p-4 bg-slate-50 border-l-4 border-blue-500 rounded-r-xl italic text-slate-600 text-sm">"The trainer demonstrated a deep understanding of AI in a Scottish context."</p>
+                                            <p className="p-4 bg-slate-50 border-l-4 border-blue-500 rounded-r-xl italic text-slate-600 text-sm">"Relevant, classroom-ready examples that resonated with my daily practice."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'learners' && (
+                            <div className="space-y-6">
+                                <div className="bg-indigo-700 text-white p-10 rounded-[2rem] shadow-xl flex flex-col md:flex-row justify-between items-center gap-8">
+                                    <div className="max-w-xl">
+                                        <h2 className="text-3xl font-black mb-4 uppercase tracking-tighter">Learner Usage & Ethics</h2>
+                                        <p className="text-indigo-100 text-sm font-medium leading-relaxed">Teachers overwhelmingly support AI as an accessibility tool, though many request more specific guidance on ethical student usage policies within Glow.</p>
+                                    </div>
+                                    <div className="bg-white/10 p-6 rounded-2xl border border-white/20 text-center min-w-[160px]">
+                                        <p className="text-5xl font-black tracking-tighter">78%</p>
+                                        <p className="text-[10px] font-bold uppercase mt-2 tracking-widest">Comfortable with Student Use</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                        <h3 className="text-sm font-black uppercase tracking-widest mb-6">ASN & Accessibility Impact</h3>
+                                        <div className="flex items-center gap-8">
+                                            <div className="w-32 h-32 rounded-full border-[12px] border-indigo-100 border-t-indigo-600 flex items-center justify-center">
+                                                <span className="text-3xl font-black text-indigo-700">94%</span>
+                                            </div>
+                                            <p className="text-sm text-slate-500 font-medium italic">"Believe AI tools specifically bridge the gap for learners with additional support needs."</p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                        <h3 className="text-sm font-black uppercase tracking-widest mb-6">Staff Sentiment</h3>
+                                        <div className="h-48">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart>
+                                                    <Pie data={SESSION_DATA.learnerUsage.viewpoints} innerRadius={50} outerRadius={70} paddingAngle={5} dataKey="value">
+                                                        {SESSION_DATA.learnerUsage.viewpoints.map((e, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                                                    </Pie>
+                                                    <Tooltip />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'sessions' && (
+                            <div className="space-y-6">
+                                <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                    <h3 className="text-sm font-black uppercase tracking-widest mb-8 text-center">Confidence Growth Across Series</h3>
+                                    <div className="h-80">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={[
+                                                { name: 'S1 Pre', val: 1.8 }, { name: 'S1 Post', val: 4.2 },
+                                                { name: 'S3 Pre', val: 2.1 }, { name: 'S3 Post', val: 4.4 }
+                                            ]}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 'bold' }} />
+                                                <YAxis domain={[0, 5]} />
+                                                <Tooltip />
+                                                <Bar dataKey="val" radius={[6, 6, 0, 0]} fill="#3b82f6" barSize={50} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'next' && (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                                    <h3 className="text-sm font-black uppercase tracking-widest mb-6">Future Support Requests</h3>
+                                    <div className="h-64">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie data={SESSION_DATA.nextSteps.requested} dataKey="value" label={({name}) => name}>
+                                                    {SESSION_DATA.nextSteps.requested.map((e, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                                                </Pie>
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                                <div className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-xl">
+                                    <h3 className="text-sm font-black uppercase tracking-widest mb-6 text-emerald-400">Strategic Roadmap</h3>
+                                    <div className="space-y-4">
+                                        {SESSION_DATA.nextSteps.priorities.map((p, i) => (
+                                            <div key={i} className="flex gap-4 items-start">
+                                                <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] font-bold shrink-0">{i+1}</div>
+                                                <p className="text-sm text-slate-300 font-medium">{p}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    <footer className="mt-20 text-center">
+                        <div className="inline-flex items-center gap-4 px-6 py-2 bg-slate-200/50 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <span>Accessible Design</span>
+                            <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                            <span>Live Data Dashboard</span>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
